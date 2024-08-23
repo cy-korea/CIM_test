@@ -13,15 +13,25 @@ const Table = styled.table`
 
 const Thead = styled.thead``;
 
-const Tr = styled.tr`
-  display: flex;
-`;
+const Tr = styled.tr``;
 
 const Th = styled.th`
   font-size: 14px;
   font-weight: bold;
   padding: 4px;
   box-shadow: 0px 1px 0px 1px rgba(0, 0, 0, 0.4);
+`;
+
+const Tbody = styled.tbody`
+  background-color: white;
+`;
+
+const Td = styled.td`
+  padding: 4px;
+  font-size: 13px;
+  text-align: center;
+  border: 1px solid black;
+  color: #333;
 `;
 
 type Test = {
@@ -40,9 +50,19 @@ type Test = {
   reserved: string;
 };
 
+const today = new Date();
+const year = today.getFullYear().toString().slice(-2);
+const month = ("0" + (today.getMonth() + 1)).toString().slice(-2);
+const day = ("0" + today.getDate()).toString().slice(-2);
+const hours = ("0" + today.getHours()).toString().slice(-2);
+const minutes = ("0" + today.getMinutes()).toString().slice(-2);
+const seconds = ("0" + today.getSeconds()).toString().slice(-2);
+
+const time = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
 const defaultData: Test[] = [
   {
-    time: new Date().toISOString(),
+    time: time,
     ceid: 401,
     crst: 0,
     avail: 1,
@@ -57,7 +77,7 @@ const defaultData: Test[] = [
     reserved: "",
   },
   {
-    time: new Date().toISOString(),
+    time: time,
     ceid: 401,
     crst: 0,
     avail: 1,
@@ -65,8 +85,8 @@ const defaultData: Test[] = [
     move: 1,
     run: 1,
     port: 3000,
-    cell_id: "ujin",
-    reader_id: "baek",
+    cell_id: "tuck",
+    reader_id: "hong",
     rrc: 0,
     judge: "N",
     reserved: "",
@@ -79,57 +99,66 @@ const columns = [
   columnHelper.accessor("time", {
     header: "TIME",
     cell: (info) => info.getValue(),
-    size: 300,
+    size: 250,
   }),
   columnHelper.accessor("ceid", {
     header: "CEID",
     cell: (info) => info.getValue(),
+    size: 80,
   }),
   columnHelper.accessor("crst", {
     header: "CRST",
     cell: (info) => info.getValue(),
+    size: 60,
   }),
   columnHelper.accessor("avail", {
     header: "AVAIL",
     cell: (info) => info.getValue(),
+    size: 60,
   }),
   columnHelper.accessor("inter", {
     header: "INTER",
     cell: (info) => info.getValue(),
+    size: 60,
   }),
   columnHelper.accessor("move", {
     header: "MOVE",
     cell: (info) => info.getValue(),
+    size: 60,
   }),
   columnHelper.accessor("run", {
     header: "RUN",
     cell: (info) => info.getValue(),
+    size: 60,
   }),
   columnHelper.accessor("port", {
     header: "PORT",
     cell: (info) => info.getValue(),
+    size: 100,
   }),
   columnHelper.accessor("cell_id", {
     header: "CELL ID",
     cell: (info) => info.getValue(),
-    size: 600,
+    size: 250,
   }),
   columnHelper.accessor("reader_id", {
     header: "READER ID",
     cell: (info) => info.getValue(),
+    size: 250,
   }),
   columnHelper.accessor("rrc", {
     header: "RRC",
     cell: (info) => info.getValue(),
+    size: 60,
   }),
   columnHelper.accessor("judge", {
     header: "JUDGE",
     cell: (info) => info.getValue(),
+    size: 60,
   }),
   columnHelper.accessor("reserved", {
     header: "RESERVED",
     cell: (info) => info.getValue(),
-    size: 300,
   }),
 ];
 
@@ -147,7 +176,7 @@ export const TrakingTabel = () => {
         {table.getHeaderGroups().map((headerGroup) => (
           <Tr key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
-              <Th key={header.id} style={{ flex: header.getSize() + "%" }}>
+              <Th key={header.id} style={{ width: header.getSize() + "px" }}>
                 {header.isPlaceholder
                   ? null
                   : flexRender(
@@ -159,7 +188,17 @@ export const TrakingTabel = () => {
           </Tr>
         ))}
       </Thead>
-      <tbody></tbody>
+      <Tbody>
+        {table.getRowModel().rows.map((row) => (
+          <Tr key={row.id}>
+            {row.getVisibleCells().map((cell) => (
+              <Td key={cell.id}>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </Td>
+            ))}
+          </Tr>
+        ))}
+      </Tbody>
     </Table>
   );
 };
