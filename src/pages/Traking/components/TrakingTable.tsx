@@ -4,7 +4,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 const Table = styled.table`
@@ -32,21 +32,22 @@ const Td = styled.td`
   text-align: center;
   border: 1px solid black;
   color: #333;
+  height: 22px;
 `;
 
 type Test = {
   time: string;
-  ceid: 401 | 402;
-  crst: 0 | 1 | 2;
-  avail: 1 | 2;
-  inter: 1 | 2;
-  move: 1 | 2;
-  run: 1 | 2;
-  port: number;
+  ceid: 401 | 402 | null;
+  crst: 0 | 1 | 2 | null;
+  avail: 1 | 2 | null;
+  inter: 1 | 2 | null;
+  move: 1 | 2 | null;
+  run: 1 | 2 | null;
+  port: number | null;
   cell_id: string;
   reader_id: string;
-  rrc: 0 | 1;
-  judge: "G" | "N" | "S" | "L" | "R";
+  rrc: 0 | 1 | null;
+  judge: "G" | "N" | "S" | "L" | "R" | null;
   reserved: string;
 };
 
@@ -91,7 +92,38 @@ const defaultData: Test[] = [
     judge: "N",
     reserved: "",
   },
+  {
+    time: time,
+    ceid: 401,
+    crst: 0,
+    avail: 1,
+    inter: 1,
+    move: 1,
+    run: 1,
+    port: 1251,
+    cell_id: "namJ",
+    reader_id: "kim",
+    rrc: 0,
+    judge: "N",
+    reserved: "",
+  },
 ];
+
+const dummyData = {
+  time: "",
+  ceid: null,
+  crst: null,
+  avail: null,
+  inter: null,
+  move: null,
+  run: null,
+  port: null,
+  cell_id: "",
+  reader_id: "",
+  rrc: null,
+  judge: null,
+  reserved: "",
+};
 
 const columnHelper = createColumnHelper<Test>();
 
@@ -169,6 +201,16 @@ export const TrakingTabel = () => {
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
+
+  useEffect(() => {
+    if (data.length < 15) {
+      const newData = [...data];
+      while (newData.length < 15) {
+        newData.push({ ...dummyData });
+      }
+      setData(newData);
+    }
+  }, [data]);
 
   return (
     <Table>
